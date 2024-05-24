@@ -8,7 +8,6 @@ import { MatDialog } from '@angular/material/dialog';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  // standalone: true,
 })
 export class AppComponent {
   title = 'myFlix-Angular-client';
