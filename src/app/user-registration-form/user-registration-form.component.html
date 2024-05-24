@@ -8,6 +8,16 @@
         <mat-form-field>
           <input
             matInput
+            [(ngModel)]="userData.FullName"
+            placeholder="First & Last Name"
+            type="text"
+            name="Fullname"
+            required
+          >
+          </mat-form-field>
+        <mat-form-field>
+          <input
+            matInput
             [(ngModel)]="userData.Username"
             placeholder="Username"
             type="text"

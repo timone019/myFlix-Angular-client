@@ -19,10 +19,11 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { UserLoginFormComponent } from './user-login-form/user-login-form.component';
 // import { app } from '../../server';
 
 @NgModule({
-  declarations: [ AppComponent, UserRegistrationFormComponent],
+  declarations: [ AppComponent, UserRegistrationFormComponent, UserLoginFormComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
