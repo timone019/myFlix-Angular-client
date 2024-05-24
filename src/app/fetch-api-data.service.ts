@@ -3,7 +3,6 @@ import {
   HttpClient,
   HttpHeaders,
   HttpErrorResponse,
-  HttpResponse,
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -13,7 +12,7 @@ const apiUrl = 'https://mymovies-8b73c95d0ae4.herokuapp.com/';
 @Injectable({
   providedIn: 'root',
 })
-export class UserRegistrationService {
+export class FetchApiDataService {
   private token: string;
 
   private getHeaders() {
@@ -27,7 +26,7 @@ export class UserRegistrationService {
     this.token = localStorage.getItem('token') || '';
   }
 
-  private extractResponseData(res: HttpResponse<object>): any {
+  private extractResponseData(res: any): any {
     const body = res.body;
     return body || {};
   }
@@ -63,7 +62,7 @@ export class UserRegistrationService {
         observe: 'response',
       })
       .pipe(
-        map((response) => this.extractResponseData(response)),
+        map((response) => response.body || {}),
         catchError(this.handleError)
       );
   }
