@@ -1,0 +1,31 @@
+<header class="header">
+  <h1>MustCMovies</h1>
+</header>
+
+<main class="movie-card-container">
+  <mat-card *ngFor="let movie of movies">
+    <div class="movie-image">
+      <img src="{{ movie.ImagePath }}" alt="{{ movie.Title }}" />
+    </div>
+    <mat-card-header>
+      <div class="header-content">
+        <mat-icon>favorite_border</mat-icon>
+        <mat-card-title>{{ movie.Title }}</mat-card-title>
+        <div class="subtitle-icon">
+          <mat-card-subtitle>{{ movie.Year }}</mat-card-subtitle>
+        </div>
+      </div>
+    </mat-card-header>
+    <mat-card-footer>
+      <mat-card-actions>
+        <button mat-button color="primary">Genre</button>
+        <button mat-button color="primary">Director</button>
+        <button mat-button color="primary">Synopsis</button>
+      </mat-card-actions>
+    </mat-card-footer>
+  </mat-card>
+</main>
+
+<footer>
+  <p>© 2024 MustCMovies</p>
+</footer>

@@ -1,0 +1,89 @@
+// Define your color palette
+$primary-color: #7ed5cb; // teal
+$secondary-color: #ffffff; // white
+$background-color: #e0f2f1; // light teal
+$button-color: royalblue; // royal blue
+$text-color: #000000; // black
+
+// Define your font hierarchy
+$font-family: 'Roboto', sans-serif;
+$header-font-size: 24px;
+$sub-header-font-size: 20px;
+$main-text-font-size: 16px;
+$button-text-font-size: 14px;
+$link-text-font-size: 14px;
+
+body {
+  background-color: $background-color;
+  font-family: $font-family;
+}
+
+.header {
+    margin-bottom: 50px;
+}
+.movie-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); // adjust the minmax values as needed
+    grid-gap: 50px; 
+    padding: 20px;
+  }
+  
+  mat-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; // distribute space evenly
+    box-sizing: border-box;
+    background: linear-gradient(to right, lighten($primary-color, 10%), $primary-color); // gradient background
+    box-shadow: 0px 10px 20px rgba(0,0,0,0.19), 0px 6px 6px rgba(0,0,0,0.23); // box shadow
+    border-radius: 10px;
+    overflow: hidden;
+
+    mat-card-header {
+      mat-card-title {
+        height: 60px;
+        font-size: $header-font-size;
+        font-weight: bold;
+      }
+  
+      mat-card-subtitle {
+        font-size: $sub-header-font-size;
+        font-weight: normal;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        color: $text-color;
+      }
+    }
+  
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+  
+    mat-card-actions {
+      display: flex;
+      justify-content: space-between;
+      
+        button {
+          font-size: $button-text-font-size;
+          font-weight: normal;
+          margin: auto;
+          padding: 10px 20px; // adjust as needed
+          border: none;
+          border-radius: 5px; // adjust as needed
+          background-color: darken($button-color, 10%); // make button darker than card
+          color: $secondary-color;
+          cursor: pointer;
+          transition: background-color 0.3s ease; // for hover effect
+      
+          &:hover {
+            background-color: lighten($primary-color, 10%); // make button lighter when hovered
+          }
+        }
+  
+      mat-icon {
+        font-size: $link-text-font-size;
+        font-weight: normal;
+      }
+    }
+  }
