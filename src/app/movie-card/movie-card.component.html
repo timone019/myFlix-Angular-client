@@ -9,7 +9,7 @@
     </div>
     <mat-card-header>
       <div class="header-content">
-        <mat-icon>favorite_border</mat-icon>
+        <mat-icon (click)="toggleFavorite(movie)">{{ movie.isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
         <mat-card-title>{{ movie.Title }}</mat-card-title>
         <div class="subtitle-icon">
           <mat-card-subtitle>{{ movie.Year }}</mat-card-subtitle>

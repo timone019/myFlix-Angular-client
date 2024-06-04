@@ -108,7 +108,7 @@ export class FetchApiDataService {
   }
 
   // Get favourite movies for a user
-  public getFavouriteMovies(username: string): Observable<any> {
+  public getFavoriteMovies(username: string): Observable<any> {
     return this.http
       .get(apiUrl + 'users/' + username + '/movies', {
         headers: this.getHeaders(),
@@ -118,7 +118,7 @@ export class FetchApiDataService {
   }
 
   // Add a movie to favourite Movies
-  public addFavouriteMovie(username: string, movieId: string): Observable<any> {
+  public addFavoriteMovie(username: string, movieId: string): Observable<any> {
     return this.http
       .post(
         apiUrl + 'users/' + username + '/movies/' + movieId,
@@ -152,7 +152,7 @@ export class FetchApiDataService {
   }
 
   // Delete a movie from the favorite movies
-  public deleteFavouriteMovie(
+  public deleteFavoriteMovie(
     username: string,
     movieId: string
   ): Observable<any> {
