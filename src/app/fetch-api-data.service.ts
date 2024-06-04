@@ -107,7 +107,7 @@ export class FetchApiDataService {
       .pipe(catchError(this.handleError));
   }
 
-  // Get favourite movies for a user
+  // Get favorite movies for a user
   public getFavoriteMovies(username: string): Observable<any> {
     return this.http
       .get(apiUrl + 'users/' + username + '/movies', {
@@ -117,7 +117,7 @@ export class FetchApiDataService {
       .pipe(catchError(this.handleError));
   }
 
-  // Add a movie to favourite Movies
+  // Add a movie to favorite Movies
   public addFavoriteMovie(username: string, movieId: string): Observable<any> {
     return this.http
       .post(

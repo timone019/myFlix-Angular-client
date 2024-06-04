@@ -15,7 +15,7 @@ export class UserProfileComponent implements OnInit {
     public fetchApiData: FetchApiDataService,
     public router: Router
   ) {
-    this.userData = JSON.parse(localStorage.getItem("user") || "");
+    this.userData = JSON.parse(localStorage.getItem("user") || "{}");
   }
 
   ngOnInit(): void {

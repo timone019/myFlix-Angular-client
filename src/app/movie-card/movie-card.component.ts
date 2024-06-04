@@ -47,4 +47,23 @@ export class MovieCardComponent {
       });
     }
   }
+
+  // openGenreModal(movie: Movie): void {
+  //   this.dialog.open(GenreComponent, {
+  //     data: { movie: movie }
+  //   });
+  // }
+  
+  // openDirectorModal(movie: Movie): void {
+  //   this.dialog.open(DirectorInfoComponent, {
+  //     data: { movie: movie }
+  //   });
+  // }
+  
+  // openSynopsisModal(movie: Movie): void {
+  //   this.dialog.open(SynopsisComponent, {
+  //     data: { movie: movie }
+  //   });
+  // }
+
 }
