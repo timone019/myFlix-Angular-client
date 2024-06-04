@@ -20,6 +20,7 @@ export class UserProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUser();
+    this.getFavoriteMovies();
   }
 
   updateUser(): void {
@@ -31,7 +32,7 @@ export class UserProfileComponent implements OnInit {
         token: this.userData.token
       };
       localStorage.setItem("user", JSON.stringify(this.userData));
-      this.getfavoriteMovies();
+      this.getFavoriteMovies();
     }, (err: any) => {
       console.error(err)
     })
@@ -43,11 +44,9 @@ export class UserProfileComponent implements OnInit {
     this.router.navigate(["movies"]);
   }
 
-  getfavoriteMovies(): void {
-    this.fetchApiData.getAllMovies().subscribe((res: any) => {
-      this.favoriteMovies = res.filter((movie: any) => {
-        return this.userData.favoriteMovies.includes(movie._id)
-      })
+  getFavoriteMovies(): void {
+    this.fetchApiData.getFavoriteMovies(this.userData.Username).subscribe((res: any) => {
+      this.favoriteMovies = res;
     }, (err: any) => {
       console.error(err);
     });
@@ -62,14 +61,14 @@ export class UserProfileComponent implements OnInit {
         token: this.userData.token
       };
       localStorage.setItem("user", JSON.stringify(this.userData));
-      this.getfavoriteMovies();
+      this.getFavoriteMovies();
     })
   }
 
   removeFromFavorite(movie: any): void {
     this.fetchApiData.deleteFavoriteMovie(this.userData.Username, movie.title).subscribe((res: any) => {
       this.userData.favoriteMovies = res.favoriteMovies;
-      this.getfavoriteMovies();
+      this.getFavoriteMovies();
     }, (err: any) => {
       console.error(err)
     })

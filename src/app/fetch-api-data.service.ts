@@ -16,9 +16,15 @@ export class FetchApiDataService {
   private token: string;
 
   private getHeaders() {
-    return new HttpHeaders({
-      Authorization: 'Bearer ' + this.token,
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json'
     });
+  
+    if (this.token) {
+      headers = headers.set('Authorization', 'Bearer ' + this.token);
+    }
+  
+    return headers;
   }
   // Inject the HttpClient module to the constructor params
   // This will provide HttpClient to the entire class, making it available via this.http
@@ -175,6 +181,10 @@ export class FetchApiDataService {
         `Backend returned code ${error.status}, ` + `body was: ${error.error}`
       );
     }
+
+     // Log the custom error message
+  console.error(errorMessage);
+  
     return throwError(new Error(errorMessage));
   }
 }
