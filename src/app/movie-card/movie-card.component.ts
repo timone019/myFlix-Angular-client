@@ -1,7 +1,11 @@
 // src/app/movie-card/movie-card.component.ts
 import { Component, OnInit } from '@angular/core';
 import { FetchApiDataService } from './../fetch-api-data.service';
+import { FavoriteMoviesService } from '../favorite-movies.service';
 
+interface User {
+  Username: string;
+}
 
 @Component({
   selector: 'app-movie-card',
@@ -12,7 +16,11 @@ export class MovieCardComponent {
   movies: any[] = [];
   user: any = {};
   favorites: any[] = [];
-  constructor(public fetchApiData: FetchApiDataService) {}
+
+  constructor(
+    public fetchApiData: FetchApiDataService,
+    private favoriteMoviesService: FavoriteMoviesService
+  ) {}
 
   ngOnInit(): void {
     this.getMovies();
@@ -30,17 +38,18 @@ export class MovieCardComponent {
   toggleFavorite(movie: any) {
     movie.isFavorite = !movie.isFavorite;
     movie.heartActive = movie.isFavorite; 
-
-    let user = localStorage.getItem('currentUser');
-    console.log('currentUser:', user);
-    let username = user ? JSON.parse(user).Username : null;
+  
+    const currentUser: User | null = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const username = currentUser ? currentUser.Username : '';
+  
+    console.log('currentUser:', currentUser);
     console.log('username:', username);
-
+  
     if (!username) {
       console.error('No user found');
       return;
     }
-  
+    
     if (movie.isFavorite) {
       // If the movie was favorited, add it to the user's favorite movie list
       this.fetchApiData.addFavoriteMovie(username, movie._id).subscribe(() => {
@@ -52,14 +61,22 @@ export class MovieCardComponent {
         console.log(`Removed ${movie.Title} from favorites`);
       });
     }
+  
 
 
   }
   getUser(): void {
     const { Username } = JSON.parse(localStorage.getItem('currentUser') || '{}');
+
+    if (!Username) {
+      console.error('No user found');
+      return;
+    }
+
     this.fetchApiData.getUser(Username).subscribe((res: any) => {
       this.user = res;
       this.favorites = this.user.FavoriteMovies;
+      this.favoriteMoviesService.updateFavoriteMovies(this.favorites);
     });
   }
   

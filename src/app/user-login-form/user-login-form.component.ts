@@ -11,54 +11,56 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { Router } from '@angular/router';
 
-
 @Component({
   selector: 'app-user-login-form',
   templateUrl: './user-login-form.component.html',
-  styleUrls: ['./user-login-form.component.scss']
+  styleUrls: ['./user-login-form.component.scss'],
 })
-
 export class UserLoginFormComponent implements OnInit {
   @Input() userData = { Username: '', Password: '' }; // This is the default login form
 
   /**
- * Called when creating an instance of the class
- * @param fetchApiData 
- * @param dialogRef 
- * @param snackBar 
- */
+   * Called when creating an instance of the class
+   * @param fetchApiData
+   * @param dialogRef
+   * @param snackBar
+   */
 
-constructor(
-  public fetchApiData: FetchApiDataService,
-  public dialogRef: MatDialogRef<UserLoginFormComponent>,
-  public snackBar: MatSnackBar,
-  private router: Router
-) { }
+  constructor(
+    public fetchApiData: FetchApiDataService,
+    public dialogRef: MatDialogRef<UserLoginFormComponent>,
+    public snackBar: MatSnackBar,
+    private router: Router
+  ) {}
 
-ngOnInit(): void {
+  ngOnInit(): void {}
 
-}
-
-// This is the function responsible for sending the form inputs to the backend
-loginUser(): void {
-  this.fetchApiData.userLogin(this.userData).subscribe(
-    (response) => {
-      // Logic for a successful user login goes here!
-      this.dialogRef.close(); // This will close the modal on success!
-      console.log(response);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('currentUser', JSON.stringify(response.user));
-      this.snackBar.open('User login successful', 'OK', {
-        duration: 2000
-      });
-      this.router.navigate(['movies']);       
-    },
-    (response) => {
-      console.log(response);
-      this.snackBar.open(response, 'OK', {
-        duration: 2000
-      });
-    }
-  );
-}
+  // This is the function responsible for sending the form inputs to the backend
+  loginUser(): void {
+    this.fetchApiData.userLogin(this.userData).subscribe(
+      (response) => {
+        // Logic for a successful user login goes here!
+        this.dialogRef.close(); // This will close the modal on success!
+        console.log(response);
+        console.log('response.user:', response.user);
+        console.log('response.user.Username:', response.user.Username);
+        if (response.user && response.user.Username) {
+          localStorage.setItem('token', response.token);
+          localStorage.setItem('currentUser', JSON.stringify(response.user));
+          this.snackBar.open('User login successful', 'OK', {
+            duration: 2000
+          });
+          this.router.navigate(['movies']);
+        } else {
+          console.error('No user found in response');
+        }      
+      },
+      (response) => {
+        console.log(response);
+        this.snackBar.open(response, 'OK', {
+          duration: 2000
+        });
+      }
+    );
+  }
 }
