@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FetchApiDataService } from '../fetch-api-data.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -7,7 +7,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   templateUrl: './genre.component.html',
   styleUrl: './genre.component.scss'
 })
-export class GenreComponent implements OnInit {
+export class GenreComponent {
   genre: any;
 
   constructor(
@@ -16,19 +16,6 @@ export class GenreComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.genre = data.genre;
-  }
-
-  ngOnInit(): void {
-    this.getGenre(this.data.genre);
-  }
-
-  getGenre(genre: any): void {
-    this.fetchApiData.getGenre(genre).subscribe((resp: any) => {
-      this.genre = resp;
-      console.log('Genre Details:', this.genre);
-    }, (error) => {
-      console.error('Error fetching genre details:', error);
-    });
   }
 
   closeDialog(): void {
