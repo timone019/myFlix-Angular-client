@@ -1,6 +1,6 @@
 <header class="header">
   <h1>MustCMovies</h1>
-  <button mat-button routerLink="/profile">Profile</button>
+  <button mat-raised-button color="primary" routerLink="/profile">Profile</button>
 </header>
 
 <main class="movie-card-container">
@@ -10,7 +10,9 @@
     </div>
     <mat-card-header>
       <div class="header-content">
-        <mat-icon (click)="toggleFavorite(movie._id)">{{ movie.isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
+        <button mat-icon-button (click)="toggleFavorite(movie._id)">
+          <mat-icon color="warn">{{ movie.isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
+        </button>        
         <mat-card-title>{{ movie.Title }}</mat-card-title>
         <div class="subtitle-icon">
           <mat-card-subtitle>{{ movie.Year }}</mat-card-subtitle>

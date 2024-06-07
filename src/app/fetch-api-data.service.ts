@@ -56,7 +56,6 @@ export class FetchApiDataService {
       catchError(this.handleError)
     );
   }
-  // User login
 // User login
 public userLogin(userDetails: any): Observable<any> {
   return this.http.post(apiUrl + 'login', userDetails).pipe(
