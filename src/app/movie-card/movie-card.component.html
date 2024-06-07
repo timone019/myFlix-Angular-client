@@ -19,9 +19,9 @@
     </mat-card-header>
     <mat-card-footer>
       <mat-card-actions>
-        <button mat-button color="primary">Genre</button>
-        <button mat-button color="primary">Director</button>
-        <button mat-button color="primary">Synopsis</button>
+        <button mat-button color="primary" (click)="openGenreModal(movie)">Genre</button>
+        <button mat-button color="primary" (click)="openDirectorModal(movie)">Director</button>
+        <button mat-button color="primary" (click)="openSynopsisModal(movie)">Synopsis</button>
       </mat-card-actions>
     </mat-card-footer>
   </mat-card>

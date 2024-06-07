@@ -88,9 +88,9 @@ public userLogin(userDetails: any): Observable<any> {
   }
 
   // Get director
-  public getDirector(id: string): Observable<any> {
+  public getDirector(directorName: string): Observable<any> {
     return this.http
-      .get(apiUrl + 'directors/' + id, this.getOptions())
+      .get(apiUrl + 'directors/' + directorName, this.getOptions())
       .pipe(catchError(this.handleError));
   }
 

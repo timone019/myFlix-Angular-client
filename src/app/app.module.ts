@@ -6,7 +6,6 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { AppRoutingModule } from './app-routing.module';
 
-
 // Import App specific components
 import { AppComponent } from './app.component';
 import { WelcomePageComponent } from './welcome-page/welcome-page.component';
@@ -15,9 +14,7 @@ import { UserLoginFormComponent } from './user-login-form/user-login-form.compon
 import { MovieCardComponent } from './movie-card/movie-card.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 
-
-
-// Import Angular Material modules 
+// Import Angular Material modules
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material/input';
@@ -27,6 +24,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
+import { GenreComponent } from './genre/genre.component';
+import { DirectorInfoComponent } from './director-info/director-info.component';
+import { DeleteUserComponent } from './delete-user/delete-user.component';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { SynopsisComponent } from './synopsis/synopsis.component';
+import { ToolbarComponent } from './toolbar/toolbar.component';
 
 const appRoutes: Routes = [
   { path: 'welcome', component: WelcomePageComponent },
@@ -36,7 +39,20 @@ const appRoutes: Routes = [
 ];
 
 @NgModule({
-  declarations: [ AppComponent, UserRegistrationFormComponent, UserLoginFormComponent, MovieCardComponent, WelcomePageComponent, UserProfileComponent],
+  declarations: [
+    AppComponent,
+    UserRegistrationFormComponent,
+    UserLoginFormComponent,
+    MovieCardComponent,
+    WelcomePageComponent,
+    UserProfileComponent,
+    GenreComponent,
+    DirectorInfoComponent,
+    DeleteUserComponent,
+    ConfirmationDialogComponent,
+    SynopsisComponent,
+    ToolbarComponent,
+  ],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -51,7 +67,7 @@ const appRoutes: Routes = [
     MatDialogModule,
     MatSnackBarModule,
     MatIconModule,
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
   ],
   providers: [],
   bootstrap: [AppComponent],

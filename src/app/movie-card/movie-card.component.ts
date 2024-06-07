@@ -1,7 +1,13 @@
 // src/app/movie-card/movie-card.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FetchApiDataService } from './../fetch-api-data.service';
 import { FavoriteMoviesService } from '../favorite-movies.service';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { GenreComponent } from '../genre/genre.component';
+import { DirectorInfoComponent } from '../director-info/director-info.component';
+import { SynopsisComponent } from '../synopsis/synopsis.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface User {
   Username: string;
@@ -21,16 +27,19 @@ export class MovieCardComponent implements OnInit {
   movies: any[] = [];
   user: any = {};
   favorites: any[] = [];
+  genres: any[] = [];
+  director: any[] = [];
+
 
   constructor(
     public fetchApiData: FetchApiDataService,
+    public dialog: MatDialog,
+    public snackBar: MatSnackBar,
+    private router: Router,
     private favoriteMoviesService: FavoriteMoviesService
   ) {}
 
   ngOnInit(): void {
-    // this.favoriteMoviesService.favoriteMovies$.subscribe((movies: any[]) => {
-    //   this.favorites = movies;
-    // });
     this.getUser();
   }
 
@@ -71,94 +80,71 @@ export class MovieCardComponent implements OnInit {
   }
   
   toggleFavorite(selectedMovie: string) {
-  // selectedMovie.isFavorite = !selectedMovie.isFavorite;
-  // selectedMovie.heartActive = selectedMovie.isFavorite;
-
-  const currentUser: User | null = JSON.parse(localStorage.getItem('currentUser') || '{}');
-  const username = currentUser ? currentUser.Username : '';
-
-  console.log('currentUser:', currentUser);
-  console.log('username:', username);
-
-  if (!username) {
-    console.error('No user found');
-    return;
+    const currentUser: User | null = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const username = currentUser?.Username || '';
+  
+    if (!username) {
+      console.error('No user found');
+      return;
+    }
+  
+    const isFavorite = currentUser?.FavoriteMovies.includes(selectedMovie) || false;
+  
+    if (!isFavorite) {
+      this.fetchApiData.addFavoriteMovie(username, selectedMovie).subscribe(() => {
+        this.updateUserFavorites(currentUser, selectedMovie, true);
+        this.snackBar.open(`Added movie with ID ${selectedMovie} to favorites`, 'Close', { duration: 2000 });
+      });
+    } else {
+      this.fetchApiData.deleteFavoriteMovie(username, selectedMovie).subscribe(() => {
+        this.updateUserFavorites(currentUser, selectedMovie, false);
+        this.snackBar.open(`Removed movie with ID ${selectedMovie} from favorites`, 'Close', { duration: 2000 });
+      });
+    }
   }
-
-  const isFavorite = currentUser ? currentUser.FavoriteMovies.includes(selectedMovie) : false;
-
-  if (!isFavorite) {
-    // If the movie was not favorited, add it to the user's favorite movie list
-    this.fetchApiData.addFavoriteMovie(username, selectedMovie).subscribe(() => {
-      console.log(`Added movie with ID ${selectedMovie} to favorites`);
-      if (currentUser) {
+  
+  updateUserFavorites(currentUser: User | null, selectedMovie: string, isFavorite: boolean) {
+    if (currentUser) {
+      if (isFavorite) {
         currentUser.FavoriteMovies.push(selectedMovie);
-        localStorage.setItem('currentUser', JSON.stringify(currentUser)); // Update the currentUser in localStorage
-      }
-      this.favoriteMoviesService.updateFavoriteMovies(currentUser ? currentUser.FavoriteMovies : []);
-      const movie = this.movies.find(movie => movie._id === selectedMovie);
-      if (movie) {
-        movie.isFavorite = true; // Update the isFavorite property of the movie
-        movie.heartActive = true; // Update the heartActive property of the movie
-      }
-    });
-  } else {
-    // If the movie was favorited, remove it from the user's favorite movie list
-    this.fetchApiData.deleteFavoriteMovie(username, selectedMovie).subscribe(() => {
-      console.log(`Removed movie with ID ${selectedMovie} from favorites`);
-      if (currentUser) {
+      } else {
         const index = currentUser.FavoriteMovies.indexOf(selectedMovie);
         if (index > -1) {
           currentUser.FavoriteMovies.splice(index, 1);
-          localStorage.setItem('currentUser', JSON.stringify(currentUser)); // Update the currentUser in localStorage
         }
       }
-      this.favoriteMoviesService.updateFavoriteMovies(currentUser ? currentUser.FavoriteMovies : []);
+      localStorage.setItem('currentUser', JSON.stringify(currentUser)); // Update the currentUser in localStorage
+      this.favoriteMoviesService.updateFavoriteMovies(currentUser.FavoriteMovies);
       const movie = this.movies.find(movie => movie._id === selectedMovie);
       if (movie) {
-        movie.isFavorite = false;
-        movie.heartActive = false; // Update the heartActive property of the movie
+        movie.isFavorite = isFavorite; // Update the isFavorite property of the movie
+        movie.heartActive = isFavorite; // Update the heartActive property of the movie
       }
+    }
+  }
+
+  
+  openGenreModal(movie: any): void {
+    this.dialog.open(GenreComponent, {
+      data: { genre: movie.Genre }
     });
   }
-}
-//   if (currentUser && currentUser.FavoriteMovies.includes(selectedMovie)) {
-//     // If the movie was favorited, add it to the user's favorite movie list
-//     this.fetchApiData.addFavoriteMovie(username, selectedMovie).subscribe(() => {
-//       console.log(`Added ${selectedMovie} to favorites`);
-//       this.favorites.push(selectedMovie); // this is adding movie to local storage favorite movie list causing dupes, need to check 
-//       this.favoriteMoviesService.updateFavoriteMovies(this.favorites);
-//     });
-//   } else {
-//     // If the movie was unfavorited, remove it from the user's favorite movie list
-//     this.fetchApiData.deleteFavoriteMovie(username, selectedMovie).subscribe(() => {
-//       console.log(`Removed ${selectedMovie} from favorites`);
-//       const index = this.favorites.indexOf(selectedMovie);
-//       if (index > -1) {
-//         this.favorites.splice(index, 1);
-//       }
-//       this.favoriteMoviesService.updateFavoriteMovies(this.favorites);
-//     });
-//   }
-// }
   
+  openDirectorModal(movie: any): void {
+    this.dialog.open(DirectorInfoComponent, {
+      data: { director: movie.Director }
+    });
+  }
   
-  // openGenreModal(movie: Movie): void {
-  //   this.dialog.open(GenreComponent, {
-  //     data: { movie: movie }
-  //   });
-  // }
-  
-  // openDirectorModal(movie: Movie): void {
-  //   this.dialog.open(DirectorInfoComponent, {
-  //     data: { movie: movie }
-  //   });
-  // }
-  
-  // openSynopsisModal(movie: Movie): void {
-  //   this.dialog.open(SynopsisComponent, {
-  //     data: { movie: movie }
-  //   });
-  // }
+  openSynopsisModal(movie: any): void {
+    this.dialog.open(SynopsisComponent, {
+      data: { movie },
+      width: '600px'
+    });
+  }
+
+  navigateToProfile(): void {
+    this.router.navigate(['/profile']);
+  }
 
 }
