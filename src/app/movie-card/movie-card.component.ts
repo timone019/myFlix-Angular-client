@@ -9,15 +9,15 @@ import { DirectorInfoComponent } from '../director-info/director-info.component'
 import { SynopsisComponent } from '../synopsis/synopsis.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-
-interface User {
-  Username: string;
-  Password: string;
-  Email: string;
-  Birthday: Date;
-  FullName: string;
-  FavoriteMovies: string[];
-}
+import { User } from '../types/user.interface';
+// interface User {
+//   Username: string;
+//   Password: string;
+//   Email: string;
+//   Birthday: Date;
+//   FullName: string;
+//   FavoriteMovies: string[];
+// }
 
 @Component({
   selector: 'app-movie-card',
@@ -42,6 +42,7 @@ export class MovieCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUser();
+    this.getMovies();
   }
 
 

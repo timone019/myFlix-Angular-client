@@ -17,11 +17,14 @@ export class FavoriteMoviesService {
   private favoriteMovies = new BehaviorSubject<Movie[]>([]);
   private allMovies: Movie[] = [];
 
-  constructor(private fetchApiDataService: FetchApiDataService) {
-    this.fetchApiDataService.getAllMovies().subscribe(movies => {
-      this.setAllMovies(movies);
-    });
-  } // Inject the FetchapisdataService
+  // constructor(private fetchApiDataService: FetchApiDataService) {
+    // this.fetchApiDataService.getAllMovies().subscribe(movies => {
+      // this.setAllMovies(movies);
+    // });
+  // } // Inject the FetchapisdataService
+
+  constructor(private fetchApiDataService: FetchApiDataService) {}
+
 
   // method to set all movies
   setAllMovies(movies: Movie[]): void {

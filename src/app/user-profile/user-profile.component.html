@@ -13,8 +13,8 @@
     </mat-card-header>
     <mat-card-content>
       <form>
-        <mat-form-field style="margin-right: 10px">
-          <label>Username</label>
+        <mat-form-field class="profile-field">
+          <mat-label>Username</mat-label>
           <input
             matInput
             [(ngModel)]="userData.Username"
@@ -24,8 +24,8 @@
             required
           />
         </mat-form-field>
-        <mat-form-field style="margin-right: 10px">
-          <label>Password</label>
+        <mat-form-field class="profile-field">
+          <mat-label>Password</mat-label>
           <input
             matInput
             [(ngModel)]="userData.Password"
@@ -35,8 +35,8 @@
             required
           />
         </mat-form-field>
-        <mat-form-field style="margin-right: 10px">
-          <label>Email</label>
+        <mat-form-field class="profile-field">
+          <mat-label>Email</mat-label>
           <input
             matInput
             [(ngModel)]="userData.Email"
@@ -46,8 +46,8 @@
             required
           />
         </mat-form-field>
-        <mat-form-field style="margin-right: 10px">
-          <label>Birthday</label>
+        <mat-form-field class="profile-field">
+          <mat-label>Birthday</mat-label>
           <input
             matInput
             [(ngModel)]="userData.Birthday"
@@ -86,7 +86,6 @@
     </mat-card-actions>
     <!-- Favorite Movies -->
     <mat-card-title>Favorite Movies</mat-card-title>
-    <!-- <div style="display: flex"> -->
       <mat-card-content class="scroll-container">
       <mat-card
         *ngFor="let movie of favoriteMoviesData"
@@ -106,10 +105,9 @@
             color="primary"
             style="margin-right: 10px"
           >
-            Remove from favorite
+            Remove from Favorites
           </button>
         </mat-card-actions>
       </mat-card>
     </mat-card-content>
-    <!-- </div> -->
   </mat-card>
