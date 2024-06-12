@@ -28,7 +28,7 @@
           <label>Password</label>
           <input
             matInput
-            [(ngModel)]="userData.password"
+            [(ngModel)]="userData.Password"
             type="password"
             placeholder="Password"
             name="Password"
@@ -39,7 +39,7 @@
           <label>Email</label>
           <input
             matInput
-            [(ngModel)]="userData.email"
+            [(ngModel)]="userData.Email"
             type="email"
             placeholder="Email"
             name="Email"
@@ -50,7 +50,7 @@
           <label>Birthday</label>
           <input
             matInput
-            [(ngModel)]="userData.birthday"
+            [(ngModel)]="userData.Birthday"
             type="date"
             placeholder="Birthday"
             name="Birthday"
@@ -88,16 +88,17 @@
     <mat-card-title>Favorite Movies</mat-card-title>
     <div style="display: flex">
       <mat-card
-        *ngFor="let movie of this.favoriteMovies"
-        style="width: 280px; margin-right: 10px"
+        *ngFor="let movie of favoriteMoviesData"
+        style="min-width: 280px; max-width: 500px; min-height: 400px; margin-right: 10px"
       >
+      <!-- <ng-container *ngIf="getFavoriteMovies(movie) as movie"> -->
         <mat-card-header>
-          <mat-card-title>{{ movie.title }}</mat-card-title>
+          <mat-card-title class="fixed-height">{{ movie.Title }}</mat-card-title>
           <mat-card-subtitle
-            >Directed by: {{ movie.director.name }}</mat-card-subtitle
-          >
+            >Directed by: {{ movie.Director.Name }}
+          </mat-card-subtitle>
         </mat-card-header>
-        <img src="{{ movie.imagePath }}" alt="{{ movie.title }}" />
+        <img src="{{ movie.ImagePath }}" alt="{{ movie.Title }}" />
         <mat-card-actions>
           <button
             mat-raised-button
@@ -108,6 +109,8 @@
             Remove from favorite
           </button>
         </mat-card-actions>
+      <!-- </ng-container> -->
+        <!-- {{ logMovie(movie) }} -->
       </mat-card>
     </div>
   </mat-card>

@@ -86,6 +86,13 @@ public userLogin(userDetails: any): Observable<any> {
       .pipe(catchError(this.handleError));
   }
 
+  // Get movie by title
+  public getMovieByTitle(title: string): Observable<any> {
+    return this.http
+      .get(apiUrl + 'movies/' + title, this.getOptions())
+      .pipe(catchError(this.handleError));
+  }
+
   // Get director
   public getDirector(directorName: string): Observable<any> {
     return this.http

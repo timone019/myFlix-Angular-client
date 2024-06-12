@@ -1,5 +1,5 @@
 // src/app/movie-card/movie-card.component.ts
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FetchApiDataService } from './../fetch-api-data.service';
 import { FavoriteMoviesService } from '../favorite-movies.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -8,6 +8,7 @@ import { GenreComponent } from '../genre/genre.component';
 import { DirectorInfoComponent } from '../director-info/director-info.component';
 import { SynopsisComponent } from '../synopsis/synopsis.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+
 
 interface User {
   Username: string;
@@ -68,6 +69,7 @@ export class MovieCardComponent implements OnInit {
       this.movies = resp;
       console.log(this.movies);
       this.updateFavoriteStatus();
+      this.favoriteMoviesService.setAllMovies(this.movies); // set all movies in the service
       return this.movies;
     });
   }
@@ -90,36 +92,55 @@ export class MovieCardComponent implements OnInit {
   
     const isFavorite = currentUser?.FavoriteMovies.includes(selectedMovie) || false;
   
+    // Find the movie in the movies array
+  let movie = this.movies.find(movie => movie._id === selectedMovie);
+
+  if (!movie) {
+    console.log('Movie not found');
+    return;
+  }
+
+  let movieTitle = movie.Title;
+
     if (!isFavorite) {
       this.fetchApiData.addFavoriteMovie(username, selectedMovie).subscribe(() => {
-        this.updateUserFavorites(currentUser, selectedMovie, true);
-        this.snackBar.open(`Added movie with ID ${selectedMovie} to favorites`, 'Close', { duration: 2000 });
+        this.updateUserFavorites(currentUser, selectedMovie, movieTitle, true);
+        this.snackBar.open(`Added movie ${movieTitle} to favorites`, 'Close', { duration: 2000 });
       });
     } else {
       this.fetchApiData.deleteFavoriteMovie(username, selectedMovie).subscribe(() => {
-        this.updateUserFavorites(currentUser, selectedMovie, false);
-        this.snackBar.open(`Removed movie with ID ${selectedMovie} from favorites`, 'Close', { duration: 2000 });
+        this.updateUserFavorites(currentUser, selectedMovie, movieTitle, false);
+        this.snackBar.open(`Removed movie ${movieTitle} from favorites`, 'Close', { duration: 2000 });
       });
     }
   }
   
-  updateUserFavorites(currentUser: User | null, selectedMovie: string, isFavorite: boolean) {
+  updateUserFavorites(currentUser: User | null, selectedMovie: string, movieTitle: string, isFavorite: boolean) {
     if (currentUser) {
+      // Ensure FavoriteMovies is an array
+      if (!Array.isArray(currentUser.FavoriteMovies)) {
+        currentUser.FavoriteMovies = [];
+      }
+  
+      let favoriteMovies = currentUser.FavoriteMovies as unknown as {id: string, title: string}[];
+  
       if (isFavorite) {
-        currentUser.FavoriteMovies.push(selectedMovie);
+        favoriteMovies.push({id: selectedMovie, title: movieTitle});
       } else {
-        const index = currentUser.FavoriteMovies.indexOf(selectedMovie);
+        const index = favoriteMovies.findIndex(movie => movie.id === selectedMovie);
         if (index > -1) {
-          currentUser.FavoriteMovies.splice(index, 1);
+          favoriteMovies.splice(index, 1);
         }
       }
+      currentUser.FavoriteMovies = favoriteMovies.map(movie => movie.id); // Update the FavoriteMovies of currentUser
       localStorage.setItem('currentUser', JSON.stringify(currentUser)); // Update the currentUser in localStorage
-      this.favoriteMoviesService.updateFavoriteMovies(currentUser.FavoriteMovies);
+      this.favoriteMoviesService.updateFavoriteMovies(favoriteMovies);
       const movie = this.movies.find(movie => movie._id === selectedMovie);
       if (movie) {
         movie.isFavorite = isFavorite; // Update the isFavorite property of the movie
         movie.heartActive = isFavorite; // Update the heartActive property of the movie
       }
+      this.favoriteMoviesService.updateFavoriteMovies(favoriteMovies);
     }
   }
 
