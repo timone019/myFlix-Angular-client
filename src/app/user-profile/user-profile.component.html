@@ -86,12 +86,12 @@
     </mat-card-actions>
     <!-- Favorite Movies -->
     <mat-card-title>Favorite Movies</mat-card-title>
-    <div style="display: flex">
+    <!-- <div style="display: flex"> -->
+      <mat-card-content class="scroll-container">
       <mat-card
         *ngFor="let movie of favoriteMoviesData"
         style="min-width: 280px; max-width: 500px; min-height: 400px; margin-right: 10px"
       >
-      <!-- <ng-container *ngIf="getFavoriteMovies(movie) as movie"> -->
         <mat-card-header>
           <mat-card-title class="fixed-height">{{ movie.Title }}</mat-card-title>
           <mat-card-subtitle
@@ -109,8 +109,7 @@
             Remove from favorite
           </button>
         </mat-card-actions>
-      <!-- </ng-container> -->
-        <!-- {{ logMovie(movie) }} -->
       </mat-card>
-    </div>
+    </mat-card-content>
+    <!-- </div> -->
   </mat-card>
