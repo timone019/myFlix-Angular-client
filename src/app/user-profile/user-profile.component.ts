@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+// src/app/user-profile/user-profile.component.ts
+
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { FetchApiDataService } from '../fetch-api-data.service';
 import { FavoriteMoviesService } from '../favorite-movies.service';
+import { Subscription } from 'rxjs';
 
 import { Movie } from '../types/movie.interface';
 
@@ -12,12 +15,12 @@ import { Movie } from '../types/movie.interface';
   styleUrl: './user-profile.component.scss',
   // providers: [DatePipe]
 })
-export class UserProfileComponent implements OnInit {
+export class UserProfileComponent implements OnInit, OnDestroy {
   userData: any = {};
   favoriteMovies: any[] = []; // array to store favorite movie IDs
   movies: any[] = [];
   favoriteMoviesData: any[] = []; // array to store favorite movie data
-
+  private subscription: Subscription = new Subscription();
   constructor(
     public fetchApiData: FetchApiDataService,
     public router: Router,
@@ -46,13 +49,32 @@ export class UserProfileComponent implements OnInit {
       console.log(this.favoriteMoviesData);
     }
   }
-  
+
+  // ngOnInit(): void {
+  //   if (this.userData && this.userData.Username) {
+  //     this.getUser();
+  //     // Get favorite movies from the service
+  //     this.subscription = this.favoriteMoviesService
+  //       .getFavoriteMovies()
+  //       .subscribe((movies: Movie[]) => {
+  //         this.favoriteMoviesData = movies;
+  //         console.log(this.favoriteMoviesData);
+  //       });
+  //   }
+  // }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
   getFavoriteMoviesFromServer(): void {
     this.fetchApiData.getFavoriteMovies(this.userData.Username).subscribe(
       (res: any) => {
         console.log('Response body:', res.body); // Log the entire response
         this.favoriteMovies = res.body; // assuming this is an array of movie IDs
-        this.favoriteMoviesData = this.movies.filter(movie => this.favoriteMovies.includes(movie._id));
+        this.favoriteMoviesData = this.movies.filter((movie) =>
+          this.favoriteMovies.includes(movie._id)
+        );
       },
       (err: any) => {
         console.error(err);
@@ -63,9 +85,15 @@ export class UserProfileComponent implements OnInit {
   getMovieByTitle(movieTitle: string): void {
     this.fetchApiData.getMovieByTitle(movieTitle).subscribe(
       (res: any) => {
-        console.log('no data returned from server for movie title:', movieTitle);
+        console.log(
+          'no data returned from server for movie title:',
+          movieTitle
+        );
         if (res.body === null) {
-          console.log('no data returned from server for movie title:', movieTitle);
+          console.log(
+            'no data returned from server for movie title:',
+            movieTitle
+          );
         } else {
           console.log('Movie data:', res.body);
           this.favoriteMoviesData.push(res.body);

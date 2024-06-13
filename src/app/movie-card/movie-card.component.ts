@@ -58,7 +58,7 @@ export class MovieCardComponent implements OnInit {
       this.user = res.body
       console.log(this.user);
       if (Array.isArray(this.user.FavoriteMovies)) {
-        this.favorites = this.user.FavoriteMovies;
+        this.favorites = this.user.FavoriteMovies.filter((movieId: string) => movieId !== null);
         this.favoriteMoviesService.updateFavoriteMovies(this.favorites);
       }
       this.getMovies();
@@ -76,6 +76,7 @@ export class MovieCardComponent implements OnInit {
   }
 
   updateFavoriteStatus(): void {
+    this.movies = this.movies.filter(movie => movie._id !== null);
     this.movies.forEach(movie => {
       movie.isFavorite = this.favorites.includes(movie._id);
       movie.heartActive = movie.isFavorite;
@@ -83,6 +84,10 @@ export class MovieCardComponent implements OnInit {
   }
   
   toggleFavorite(selectedMovie: string) {
+    if (!selectedMovie) {
+      console.error('Selected movie ID is null');
+      return;
+    }
     const currentUser: User | null = JSON.parse(localStorage.getItem('currentUser') || '{}');
     const username = currentUser?.Username || '';
   
@@ -123,8 +128,8 @@ export class MovieCardComponent implements OnInit {
         currentUser.FavoriteMovies = [];
       }
   
-      let favoriteMovies = currentUser.FavoriteMovies as unknown as {id: string, title: string}[];
-  
+      let favoriteMovies = (currentUser.FavoriteMovies as unknown as {id: string, title: string}[]).filter(movie => movie !== null);
+
       if (isFavorite) {
         favoriteMovies.push({id: selectedMovie, title: movieTitle});
       } else {
@@ -133,7 +138,7 @@ export class MovieCardComponent implements OnInit {
           favoriteMovies.splice(index, 1);
         }
       }
-      currentUser.FavoriteMovies = favoriteMovies.map(movie => movie.id); // Update the FavoriteMovies of currentUser
+      currentUser.FavoriteMovies = favoriteMovies.filter(movie => movie !==null).map(movie => movie.id); // Update the FavoriteMovies of currentUser
       localStorage.setItem('currentUser', JSON.stringify(currentUser)); // Update the currentUser in localStorage
       this.favoriteMoviesService.updateFavoriteMovies(favoriteMovies);
       const movie = this.movies.find(movie => movie._id === selectedMovie);

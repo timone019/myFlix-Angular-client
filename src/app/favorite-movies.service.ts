@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { FetchApiDataService } from './fetch-api-data.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 
 import { Movie } from './types/movie.interface';
 
@@ -16,12 +16,6 @@ interface FavoriteMovie {
 export class FavoriteMoviesService {
   private favoriteMovies = new BehaviorSubject<Movie[]>([]);
   private allMovies: Movie[] = [];
-
-  // constructor(private fetchApiDataService: FetchApiDataService) {
-    // this.fetchApiDataService.getAllMovies().subscribe(movies => {
-      // this.setAllMovies(movies);
-    // });
-  // } // Inject the FetchapisdataService
 
   constructor(private fetchApiDataService: FetchApiDataService) {}
 
@@ -40,8 +34,8 @@ export class FavoriteMoviesService {
   getAllMovies(): Movie[] {
     return this.allMovies;
   }
-  getFavoriteMovies(): Movie[] {
-    return this.favoriteMovies.getValue();
+  public getFavoriteMovies(): Observable<Movie[]> {
+    return this.favoriteMovies.asObservable();
   }
 
   addFavoriteMovie(movie: Movie): void {
