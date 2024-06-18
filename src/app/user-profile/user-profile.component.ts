@@ -98,10 +98,13 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         }
         this.userData = {
           ...data,
-          id: res.body.id, // Correct typing here
+          id: res.body._id, 
           password: this.userData.password,
           token: this.userData.token,
         };
+        // Update the token in the local storage
+        localStorage.setItem('token', res.token);
+
         localStorage.setItem('currentUser', JSON.stringify(this.userData));
         if (Array.isArray(this.userData.FavoriteMovies)) {
           const favoriteMovies = this.userData.FavoriteMovies.map(
@@ -143,7 +146,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
           }
           this.userData = {
             ...data,
-            id: res.body.id,
+            id: res.body._id,
             password: this.userData.password,
             token: this.userData.token,
           };

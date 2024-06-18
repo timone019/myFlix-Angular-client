@@ -79,12 +79,6 @@ public userLogin(userDetails: any): Observable<any> {
       );
   }
 
-  // Get one movie
-  public getOneMovie(id: string): Observable<any> {
-    return this.http
-      .get(apiUrl + 'movies/' + id, this.getOptions())
-      .pipe(catchError(this.handleError));
-  }
 
   // Get movie by title
   public getMovieByTitle(title: string): Observable<any> {
@@ -101,9 +95,9 @@ public userLogin(userDetails: any): Observable<any> {
   }
 
   // Get genre
-  public getGenre(id: string): Observable<any> {
+  public getGenre(name: string): Observable<any> {
     return this.http
-      .get(apiUrl + 'genres/' + id, this.getOptions())
+      .get(apiUrl + 'genres/' + name, this.getOptions())
       .pipe(catchError(this.handleError));
   }
 
@@ -114,12 +108,7 @@ public userLogin(userDetails: any): Observable<any> {
       .pipe(catchError(this.handleError));
   }
 
-  // Get favorite movies for a user
-  public getFavoriteMovies(username: string): Observable<any> {
-    return this.http
-      .get(apiUrl + 'users/' + username + '/movies', this.getOptions())
-      .pipe(catchError(this.handleError));
-  }
+
 
   // Add a movie to favorite Movies
   public addFavoriteMovie(username: string, movieId: string): Observable<any> {
