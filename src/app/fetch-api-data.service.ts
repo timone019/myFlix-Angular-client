@@ -13,15 +13,16 @@ const apiUrl = 'https://mymovies-8b73c95d0ae4.herokuapp.com/';
   providedIn: 'root',
 })
 export class FetchApiDataService {
-  private token: string;
 
   private getHeaders() {
     let headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
+
+    const token = localStorage.getItem('token');
   
-    if (this.token) {
-      headers = headers.set('Authorization', 'Bearer ' + this.token);
+    if (token) {
+      headers = headers.set('Authorization', 'Bearer ' + token);
     }
   
     return headers;
@@ -36,9 +37,7 @@ export class FetchApiDataService {
 
   // Inject the HttpClient module to the constructor params
   // This will provide HttpClient to the entire class, making it available via this.http
-  constructor(private http: HttpClient) {
-    this.token = localStorage.getItem('token') || '';
-  }
+  constructor(private http: HttpClient) {}
 
   private extractResponseData(res: any): any {
     const body = res.body;
