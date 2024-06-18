@@ -9,6 +9,11 @@ import { Subscription } from 'rxjs';
 
 import { Movie } from '../types/movie.interface';
 
+interface FavoriteMovie extends Movie {
+  id: string;
+  title: string;
+}
+
 @Component({
   selector: 'app-user-profile',
   templateUrl: './user-profile.component.html',
@@ -34,52 +39,30 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ngOnInit(): void {
-  //   if (this.userData && this.userData.Username) {
-  //     this.getUser();
-  //     this.getFavoriteMoviesFromServer();
-  //   }
-  // }
-
   ngOnInit(): void {
     if (this.userData && this.userData.Username) {
       this.getUser();
-      // Get favorite movies from the service
-      this.favoriteMoviesData = this.favoriteMoviesService.getFavMovies(this.userData.FavoriteMovies);
-      console.log(this.favoriteMoviesData);
+      this.subscription = this.favoriteMoviesService
+        .getFavoriteMoviesObservable()
+        .subscribe((movies) => {
+          this.favoriteMoviesData = movies
+            .map((fav) => {
+              const movie = this.favoriteMoviesService
+                .getAllMovies()
+                .find((m) => m._id === fav.id);
+              return movie ? { ...movie, ...fav } : undefined;
+            })
+            .filter(
+              (movie: FavoriteMovie | undefined): movie is FavoriteMovie =>
+                movie !== null && movie !== undefined
+            );
+          console.log('Favorite Movies Data:', this.favoriteMoviesData);
+        });
     }
   }
 
-  // ngOnInit(): void {
-  //   if (this.userData && this.userData.Username) {
-  //     this.getUser();
-  //     // Get favorite movies from the service
-  //     this.subscription = this.favoriteMoviesService
-  //       .getFavoriteMovies()
-  //       .subscribe((movies: Movie[]) => {
-  //         this.favoriteMoviesData = movies;
-  //         console.log(this.favoriteMoviesData);
-  //       });
-  //   }
-  // }
-
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
-  }
-
-  getFavoriteMoviesFromServer(): void {
-    this.fetchApiData.getFavoriteMovies(this.userData.Username).subscribe(
-      (res: any) => {
-        console.log('Response body:', res.body); // Log the entire response
-        this.favoriteMovies = res.body; // assuming this is an array of movie IDs
-        this.favoriteMoviesData = this.movies.filter((movie) =>
-          this.favoriteMovies.includes(movie._id)
-        );
-      },
-      (err: any) => {
-        console.error(err);
-      }
-    );
   }
 
   getMovieByTitle(movieTitle: string): void {
@@ -115,18 +98,32 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         }
         this.userData = {
           ...data,
-          id: res._id,
+          id: res.body.id, // Correct typing here
           password: this.userData.password,
           token: this.userData.token,
         };
         localStorage.setItem('currentUser', JSON.stringify(this.userData));
-        this.getFavoriteMoviesFromServer(); // Fetch the updated list of favorite movies
+        if (Array.isArray(this.userData.FavoriteMovies)) {
+          const favoriteMovies = this.userData.FavoriteMovies.map(
+            (id: string) => {
+              const movie = this.favoriteMoviesService
+                .getAllMovies()
+                .find((m: Movie) => m._id === id);
+              return movie ? { id, title: movie.Title } : undefined;
+            }
+          ).filter(
+            (movie: FavoriteMovie | undefined): movie is FavoriteMovie =>
+              movie !== null && movie !== undefined
+          );
+          this.favoriteMoviesService.updateFavoriteMovies(favoriteMovies);
+        }
       },
       (err: any) => {
         console.error(err);
       }
     );
   }
+
   resetUser(): void {
     this.userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
   }
@@ -146,22 +143,50 @@ export class UserProfileComponent implements OnInit, OnDestroy {
           }
           this.userData = {
             ...data,
-            id: res._id,
+            id: res.body.id,
             password: this.userData.password,
             token: this.userData.token,
           };
           localStorage.setItem('currentUser', JSON.stringify(this.userData));
+          if (Array.isArray(this.userData.FavoriteMovies)) {
+            const favoriteMovies = this.userData.FavoriteMovies.map(
+              (id: string) => {
+                const movie = this.favoriteMoviesService
+                  .getAllMovies()
+                  .find((m) => m._id === id);
+                return movie ? { id, title: movie?.Title } : undefined;
+              }
+            ).filter(
+              (movie: FavoriteMovie | undefined): movie is FavoriteMovie =>
+                movie !== null && movie !== undefined
+            );
+            this.favoriteMoviesService.updateFavoriteMovies(favoriteMovies);
+          }
         });
     }
   }
 
-  removeFromFavorite(movie: any): void {
+  removeFromFavorite(movie: Movie): void {
     this.fetchApiData
-      .deleteFavoriteMovie(this.userData.Username, movie.title)
+      .deleteFavoriteMovie(this.userData.Username, movie._id)
       .subscribe(
-        (res: any) => {
-          this.favoriteMoviesService.updateFavoriteMovies(movie._id);
-          this.getFavoriteMoviesFromServer();
+        () => {
+          const updatedFavoriteMovies = this.userData.FavoriteMovies.filter(
+            (id: string) => id !== movie._id
+          )
+            .map((id: string) => {
+              const movie = this.favoriteMoviesService
+                .getAllMovies()
+                .find((m) => m._id === id);
+              return movie ? { id, title: movie?.Title } : undefined;
+            })
+            .filter(
+              (movie: FavoriteMovie | undefined): movie is FavoriteMovie =>
+                movie !== null && movie !== undefined
+            );
+          this.favoriteMoviesService.updateFavoriteMovies(
+            updatedFavoriteMovies
+          );
         },
         (err: any) => {
           console.error(err);

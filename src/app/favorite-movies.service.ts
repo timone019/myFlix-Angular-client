@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { FetchApiDataService } from './fetch-api-data.service';
-import { forkJoin, Observable } from 'rxjs';
 
 import { Movie } from './types/movie.interface';
 
@@ -14,11 +13,10 @@ interface FavoriteMovie {
   providedIn: 'root',
 })
 export class FavoriteMoviesService {
-  private favoriteMovies = new BehaviorSubject<Movie[]>([]);
+  private favoriteMovies = new BehaviorSubject<FavoriteMovie[]>([]);
   private allMovies: Movie[] = [];
 
   constructor(private fetchApiDataService: FetchApiDataService) {}
-
 
   // method to set all movies
   setAllMovies(movies: Movie[]): void {
@@ -28,35 +26,19 @@ export class FavoriteMoviesService {
   getFavMovies(userFavMovieIds: string[]): Movie[] {
     console.log('allMovies:', this.allMovies);
     console.log('userFavMovieIds:', userFavMovieIds);
-    return this.allMovies.filter(movie => userFavMovieIds.includes(movie._id));
+    return this.allMovies.filter((movie) =>
+      userFavMovieIds.includes(movie._id)
+    );
   }
   // method to get all movies
   getAllMovies(): Movie[] {
     return this.allMovies;
   }
-  public getFavoriteMovies(): Observable<Movie[]> {
+  public getFavoriteMoviesObservable(): Observable<FavoriteMovie[]> {
     return this.favoriteMovies.asObservable();
   }
 
-  addFavoriteMovie(movie: Movie): void {
-    const currentFavorites = this.favoriteMovies.getValue();
-    this.favoriteMovies.next([...currentFavorites, movie]);
-  }
-
-  removeFavoriteMovie(movieId: string): void {
-    const currentFavorites = this.favoriteMovies.getValue();
-    const updatedFavorites = currentFavorites.filter(
-      (movie) => movie._id !== movieId
-    );
-    this.favoriteMovies.next(updatedFavorites);
-  }
   updateFavoriteMovies(favoriteMovies: FavoriteMovie[]): void {
-    const movieObservables = favoriteMovies.map(favoriteMovie => {
-      return this.fetchApiDataService.getMovieByTitle(favoriteMovie.title);
-    });
-  
-    forkJoin(movieObservables).subscribe(fullMovies => {
-      this.favoriteMovies.next(fullMovies);
-    });
+    this.favoriteMovies.next(favoriteMovies);
   }
 }

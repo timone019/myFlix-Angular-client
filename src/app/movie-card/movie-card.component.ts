@@ -10,14 +10,7 @@ import { SynopsisComponent } from '../synopsis/synopsis.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { User } from '../types/user.interface';
-// interface User {
-//   Username: string;
-//   Password: string;
-//   Email: string;
-//   Birthday: Date;
-//   FullName: string;
-//   FavoriteMovies: string[];
-// }
+import { Movie } from '../types/movie.interface';
 
 @Component({
   selector: 'app-movie-card',
@@ -25,12 +18,11 @@ import { User } from '../types/user.interface';
   styleUrl: './movie-card.component.scss',
 })
 export class MovieCardComponent implements OnInit {
-  movies: any[] = [];
+  movies: Movie[] = [];
   user: any = {};
-  favorites: any[] = [];
+  favorites: string[] = [];
   genres: any[] = [];
   director: any[] = [];
-
 
   constructor(
     public fetchApiData: FetchApiDataService,
@@ -45,21 +37,22 @@ export class MovieCardComponent implements OnInit {
     this.getMovies();
   }
 
-
   getUser(): void {
-    const { Username } = JSON.parse(localStorage.getItem('currentUser') || '{}');
-  
+    const { Username } = JSON.parse(
+      localStorage.getItem('currentUser') || '{}'
+    );
     if (!Username) {
       console.error('No user found');
       return;
     }
-  
+
     this.fetchApiData.getUser(Username).subscribe((res: any) => {
-      this.user = res.body
-      console.log(this.user);
+      this.user = res.body;
       if (Array.isArray(this.user.FavoriteMovies)) {
-        this.favorites = this.user.FavoriteMovies.filter((movieId: string) => movieId !== null);
-        this.favoriteMoviesService.updateFavoriteMovies(this.favorites);
+        this.favorites = this.user.FavoriteMovies;
+        this.favoriteMoviesService.updateFavoriteMovies(
+          this.favorites.map((id) => ({ id, title: '' }))
+        );
       }
       this.getMovies();
     });
@@ -76,102 +69,125 @@ export class MovieCardComponent implements OnInit {
   }
 
   updateFavoriteStatus(): void {
-    this.movies = this.movies.filter(movie => movie._id !== null);
-    this.movies.forEach(movie => {
+    this.movies.forEach((movie) => {
       movie.isFavorite = this.favorites.includes(movie._id);
       movie.heartActive = movie.isFavorite;
     });
   }
-  
+
   toggleFavorite(selectedMovie: string) {
-    if (!selectedMovie) {
-      console.error('Selected movie ID is null');
-      return;
-    }
-    const currentUser: User | null = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const currentUser: User | null = JSON.parse(
+      localStorage.getItem('currentUser') || '{}'
+    );
     const username = currentUser?.Username || '';
-  
     if (!username) {
       console.error('No user found');
       return;
     }
-  
-    const isFavorite = currentUser?.FavoriteMovies.includes(selectedMovie) || false;
-  
-    // Find the movie in the movies array
-  let movie = this.movies.find(movie => movie._id === selectedMovie);
 
-  if (!movie) {
-    console.log('Movie not found');
-    return;
-  }
+    const isFavorite =
+      currentUser?.FavoriteMovies.includes(selectedMovie) || false;
+    let movie = this.movies.find((movie) => movie._id === selectedMovie);
+    if (!movie) {
+      console.log('Movie not found');
+      return;
+    }
 
-  let movieTitle = movie.Title;
+    let movieTitle = movie.Title;
 
     if (!isFavorite) {
-      this.fetchApiData.addFavoriteMovie(username, selectedMovie).subscribe(() => {
-        this.updateUserFavorites(currentUser, selectedMovie, movieTitle, true);
-        this.snackBar.open(`Added movie ${movieTitle} to favorites`, 'Close', { duration: 2000 });
-      });
+      this.fetchApiData
+        .addFavoriteMovie(username, selectedMovie)
+        .subscribe(() => {
+          this.updateUserFavorites(
+            currentUser,
+            selectedMovie,
+            movieTitle,
+            true
+          );
+          this.snackBar.open(
+            `Added movie ${movieTitle} to favorites`,
+            'Close',
+            { duration: 2000 }
+          );
+        });
     } else {
-      this.fetchApiData.deleteFavoriteMovie(username, selectedMovie).subscribe(() => {
-        this.updateUserFavorites(currentUser, selectedMovie, movieTitle, false);
-        this.snackBar.open(`Removed movie ${movieTitle} from favorites`, 'Close', { duration: 2000 });
-      });
+      this.fetchApiData
+        .deleteFavoriteMovie(username, selectedMovie)
+        .subscribe(() => {
+          this.updateUserFavorites(
+            currentUser,
+            selectedMovie,
+            movieTitle,
+            false
+          );
+          this.snackBar.open(
+            `Removed movie ${movieTitle} from favorites`,
+            'Close',
+            { duration: 2000 }
+          );
+        });
     }
   }
-  
-  updateUserFavorites(currentUser: User | null, selectedMovie: string, movieTitle: string, isFavorite: boolean) {
+
+  updateUserFavorites(
+    currentUser: User | null,
+    selectedMovie: string,
+    movieTitle: string,
+    isFavorite: boolean
+  ) {
     if (currentUser) {
-      // Ensure FavoriteMovies is an array
       if (!Array.isArray(currentUser.FavoriteMovies)) {
         currentUser.FavoriteMovies = [];
       }
-  
-      let favoriteMovies = (currentUser.FavoriteMovies as unknown as {id: string, title: string}[]).filter(movie => movie !== null);
+
+      let favoriteMovies = currentUser.FavoriteMovies.filter(
+        (movie) => movie !== null
+      );
 
       if (isFavorite) {
-        favoriteMovies.push({id: selectedMovie, title: movieTitle});
+        favoriteMovies.push(selectedMovie);
       } else {
-        const index = favoriteMovies.findIndex(movie => movie.id === selectedMovie);
+        const index = favoriteMovies.indexOf(selectedMovie);
         if (index > -1) {
           favoriteMovies.splice(index, 1);
         }
       }
-      currentUser.FavoriteMovies = favoriteMovies.filter(movie => movie !==null).map(movie => movie.id); // Update the FavoriteMovies of currentUser
-      localStorage.setItem('currentUser', JSON.stringify(currentUser)); // Update the currentUser in localStorage
-      this.favoriteMoviesService.updateFavoriteMovies(favoriteMovies);
-      const movie = this.movies.find(movie => movie._id === selectedMovie);
+      currentUser.FavoriteMovies = favoriteMovies.filter(
+        (movie) => movie !== null
+      );
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      this.favoriteMoviesService.updateFavoriteMovies(
+        favoriteMovies.map((id) => ({ id, title: movieTitle }))
+      );
+      const movie = this.movies.find((movie) => movie._id === selectedMovie);
       if (movie) {
-        movie.isFavorite = isFavorite; // Update the isFavorite property of the movie
-        movie.heartActive = isFavorite; // Update the heartActive property of the movie
+        movie.isFavorite = isFavorite;
+        movie.heartActive = isFavorite;
       }
-      this.favoriteMoviesService.updateFavoriteMovies(favoriteMovies);
     }
   }
 
-  
   openGenreModal(movie: any): void {
     this.dialog.open(GenreComponent, {
-      data: { genre: movie.Genre }
+      data: { genre: movie.Genre },
     });
   }
-  
+
   openDirectorModal(movie: any): void {
     this.dialog.open(DirectorInfoComponent, {
-      data: { director: movie.Director }
+      data: { director: movie.Director },
     });
   }
-  
+
   openSynopsisModal(movie: any): void {
     this.dialog.open(SynopsisComponent, {
       data: { movie },
-      width: '600px'
+      width: '600px',
     });
   }
 
   navigateToProfile(): void {
     this.router.navigate(['/profile']);
   }
-
 }
