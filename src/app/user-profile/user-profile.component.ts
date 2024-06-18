@@ -22,9 +22,9 @@ interface FavoriteMovie extends Movie {
 })
 export class UserProfileComponent implements OnInit, OnDestroy {
   userData: any = {};
-  favoriteMovies: any[] = []; // array to store favorite movie IDs
+  favoriteMovieIds: any[] = []; // array to store favorite movie IDs
   movies: any[] = [];
-  favoriteMoviesData: any[] = []; // array to store favorite movie data
+  favoriteMoviesData: any[] = []; // array to store favorite movie data (objects)
   private subscription: Subscription = new Subscription();
   constructor(
     public fetchApiData: FetchApiDataService,
@@ -46,14 +46,14 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         .getFavoriteMoviesObservable()
         .subscribe((movies) => {
           this.favoriteMoviesData = movies
-            .map((fav) => {
+            .map((fav: { id: string; title: string; }) => {
               const movie = this.favoriteMoviesService
                 .getAllMovies()
                 .find((m) => m._id === fav.id);
               return movie ? { ...movie, ...fav } : undefined;
             })
             .filter(
-              (movie: FavoriteMovie | undefined): movie is FavoriteMovie =>
+              (movie: { id: string; title: string; } | undefined): movie is FavoriteMovie =>
                 movie !== null && movie !== undefined
             );
           console.log('Favorite Movies Data:', this.favoriteMoviesData);
@@ -63,6 +63,31 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  formatBirthdayAndSetUserData(data: any): void {
+    if (data && data.Birthday) {
+      let date = new Date(data.Birthday);
+      data.Birthday = date.toISOString().slice(0, 10);
+    }
+    this.userData = {
+      ...data,
+      id: data._id,
+      password: this.userData.password,
+      token: this.userData.token,
+    };
+    localStorage.setItem('currentUser', JSON.stringify(this.userData));
+  }
+
+  mapAndFilterFavoriteMovieIds(favoriteMovieIds: string[]): FavoriteMovie[] {
+    return favoriteMovieIds
+      .map((id: string) => {
+        const movie = this.favoriteMoviesService
+          .getAllMovies()
+          .find((m: Movie) => m._id === id);
+        return movie ? { ...movie, id, title: movie.Title } as FavoriteMovie : undefined;
+      })
+      .filter((movie: FavoriteMovie | undefined): movie is FavoriteMovie => movie !== undefined);
   }
 
   getMovieByTitle(movieTitle: string): void {
@@ -92,34 +117,11 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.fetchApiData.editUser(this.userData.Username, this.userData).subscribe(
       (res: any) => {
         const data = res.body;
-        if (data && data.Birthday) {
-          let date = new Date(data.Birthday);
-          data.Birthday = date.toISOString().slice(0, 10);
-        }
-        this.userData = {
-          ...data,
-          id: res.body._id, 
-          password: this.userData.password,
-          token: this.userData.token,
-        };
-        // Update the token in the local storage
-        localStorage.setItem('token', res.token);
-
-        localStorage.setItem('currentUser', JSON.stringify(this.userData));
-        if (Array.isArray(this.userData.FavoriteMovies)) {
-          const favoriteMovies = this.userData.FavoriteMovies.map(
-            (id: string) => {
-              const movie = this.favoriteMoviesService
-                .getAllMovies()
-                .find((m: Movie) => m._id === id);
-              return movie ? { id, title: movie.Title } : undefined;
-            }
-          ).filter(
-            (movie: FavoriteMovie | undefined): movie is FavoriteMovie =>
-              movie !== null && movie !== undefined
-          );
-          this.favoriteMoviesService.updateFavoriteMovies(favoriteMovies);
-        }
+        this.formatBirthdayAndSetUserData(res.body);
+    if (Array.isArray(this.userData.FavoriteMovieIds)) {
+      const favoriteMovies = this.mapAndFilterFavoriteMovieIds(this.userData.FavoriteMoviesIds);
+      this.favoriteMoviesService.updateFavoriteMovies(favoriteMovies);
+    }
       },
       (err: any) => {
         console.error(err);
@@ -140,31 +142,11 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         .getUser(this.userData.Username)
         .subscribe((res: any) => {
           const data = res.body;
-          if (data && data.Birthday) {
-            let date = new Date(data.Birthday);
-            data.Birthday = date.toISOString().slice(0, 10);
-          }
-          this.userData = {
-            ...data,
-            id: res.body._id,
-            password: this.userData.password,
-            token: this.userData.token,
-          };
-          localStorage.setItem('currentUser', JSON.stringify(this.userData));
-          if (Array.isArray(this.userData.FavoriteMovies)) {
-            const favoriteMovies = this.userData.FavoriteMovies.map(
-              (id: string) => {
-                const movie = this.favoriteMoviesService
-                  .getAllMovies()
-                  .find((m) => m._id === id);
-                return movie ? { id, title: movie?.Title } : undefined;
-              }
-            ).filter(
-              (movie: FavoriteMovie | undefined): movie is FavoriteMovie =>
-                movie !== null && movie !== undefined
-            );
-            this.favoriteMoviesService.updateFavoriteMovies(favoriteMovies);
-          }
+          this.formatBirthdayAndSetUserData(res.body);
+    if (Array.isArray(this.userData.FavoriteMoviesIds)) {
+      const favoriteMovies = this.mapAndFilterFavoriteMovieIds(this.userData.FavoriteMoviesIds);
+      this.favoriteMoviesService.updateFavoriteMovies(favoriteMovies);
+    }
         });
     }
   }
@@ -174,22 +156,9 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       .deleteFavoriteMovie(this.userData.Username, movie._id)
       .subscribe(
         () => {
-          const updatedFavoriteMovies = this.userData.FavoriteMovies.filter(
-            (id: string) => id !== movie._id
-          )
-            .map((id: string) => {
-              const movie = this.favoriteMoviesService
-                .getAllMovies()
-                .find((m) => m._id === id);
-              return movie ? { id, title: movie?.Title } : undefined;
-            })
-            .filter(
-              (movie: FavoriteMovie | undefined): movie is FavoriteMovie =>
-                movie !== null && movie !== undefined
-            );
-          this.favoriteMoviesService.updateFavoriteMovies(
-            updatedFavoriteMovies
-          );
+          const updatedFavoriteMoviesIds = this.favoriteMoviesData.filter(m => m._id !== movie._id);
+          const updatedFavoriteMovies = this.mapAndFilterFavoriteMovieIds(updatedFavoriteMoviesIds);
+          this.favoriteMoviesService.updateFavoriteMovies(updatedFavoriteMovies);
         },
         (err: any) => {
           console.error(err);
