@@ -13,6 +13,12 @@ import { UserRegistrationFormComponent } from './user-registration-form/user-reg
 import { UserLoginFormComponent } from './user-login-form/user-login-form.component';
 import { MovieCardComponent } from './movie-card/movie-card.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
+import { GenreComponent } from './genre/genre.component';
+import { DirectorInfoComponent } from './director-info/director-info.component';
+import { DeleteUserComponent } from './delete-user/delete-user.component';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { SynopsisComponent } from './synopsis/synopsis.component';
+import { ToolbarComponent } from './toolbar/toolbar.component';
 
 // Import Angular Material modules
 import { FormsModule } from '@angular/forms';
@@ -24,12 +30,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
-import { GenreComponent } from './genre/genre.component';
-import { DirectorInfoComponent } from './director-info/director-info.component';
-import { DeleteUserComponent } from './delete-user/delete-user.component';
-import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
-import { SynopsisComponent } from './synopsis/synopsis.component';
-import { ToolbarComponent } from './toolbar/toolbar.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatMenuModule } from '@angular/material/menu';
 
 const appRoutes: Routes = [
   { path: 'welcome', component: WelcomePageComponent },
@@ -67,6 +69,8 @@ const appRoutes: Routes = [
     MatDialogModule,
     MatSnackBarModule,
     MatIconModule,
+    MatToolbarModule,
+    MatMenuModule,
     RouterModule.forRoot(appRoutes),
   ],
   providers: [],

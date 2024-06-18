@@ -165,9 +165,9 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       );
   }
 
-  logout(): void {
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('token');
-    this.router.navigate(['welcome']);
-  }
+  // logout(): void {
+  //   localStorage.removeItem('currentUser');
+  //   localStorage.removeItem('token');
+  //   this.router.navigate(['welcome']);
+  // }
 }
