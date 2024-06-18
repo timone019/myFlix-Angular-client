@@ -24,8 +24,6 @@ export class FavoriteMoviesService {
   }
 
   getFavMovies(userFavMovieIds: string[]): Movie[] {
-    console.log('allMovies:', this.allMovies);
-    console.log('userFavMovieIds:', userFavMovieIds);
     return this.allMovies.filter((movie) =>
       userFavMovieIds.includes(movie._id)
     );

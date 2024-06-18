@@ -61,7 +61,6 @@ export class MovieCardComponent implements OnInit {
   getMovies(): void {
     this.fetchApiData.getAllMovies().subscribe((resp: any) => {
       this.movies = resp;
-      console.log(this.movies);
       this.updateFavoriteStatus();
       this.favoriteMoviesService.setAllMovies(this.movies); // set all movies in the service
       return this.movies;

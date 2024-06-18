@@ -56,7 +56,6 @@ export class UserProfileComponent implements OnInit, OnDestroy {
               (movie: { id: string; title: string; } | undefined): movie is FavoriteMovie =>
                 movie !== null && movie !== undefined
             );
-          console.log('Favorite Movies Data:', this.favoriteMoviesData);
         });
     }
   }
