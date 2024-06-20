@@ -7,13 +7,23 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-//Declaring the api url that will provide data for the client app
+
+/** Declaring the api url that will provide data for the client app */
 const apiUrl = 'https://mymovies-8b73c95d0ae4.herokuapp.com/';
+
+/**
+ * Service to fetch data from the movie API.
+ */
 @Injectable({
   providedIn: 'root',
 })
+
 export class FetchApiDataService {
 
+   /**
+   * Retrieves headers for HTTP requests, including Authorization token if available.
+   * @returns HttpHeaders object with Content-Type and Authorization if token exists.
+   */
   private getHeaders() {
     let headers = new HttpHeaders({
       'Content-Type': 'application/json'
@@ -28,6 +38,10 @@ export class FetchApiDataService {
     return headers;
   }
 
+    /**
+   * Constructs options for HTTP requests including headers.
+   * @returns RequestOptions object with headers and observe response.
+   */
   private getOptions() {
     return {
       headers: this.getHeaders(),
@@ -44,7 +58,11 @@ export class FetchApiDataService {
     return body || {};
   }
 
-  // Making the api call for the user registration endpoint
+    /**
+   * Makes an API call to register a new user.
+   * @param userDetails User details for registration.
+   * @returns Observable with registration response.
+   */
   public userRegistration(userDetails: any): Observable<any> {
     return this.http.post(apiUrl + 'users/register', userDetails).pipe(
       map((res: any) => {
@@ -55,7 +73,12 @@ export class FetchApiDataService {
       catchError(this.handleError)
     );
   }
-// User login
+
+   /**
+   * Logs in an existing user.
+   * @param userDetails User details to login.
+   * @returns Observable with login response.
+   */
 public userLogin(userDetails: any): Observable<any> {
   return this.http.post(apiUrl + 'login', userDetails).pipe(
     map((res: any) => {
@@ -68,7 +91,10 @@ public userLogin(userDetails: any): Observable<any> {
   );
 }
 
-  // Get all movies
+ /**
+   * Retrieves all movies.
+   * @returns Observable with list of movies.
+   */
   public getAllMovies(): Observable<any> {
     return this.http
       .get(apiUrl + 'movies', this.getOptions())
@@ -79,28 +105,44 @@ public userLogin(userDetails: any): Observable<any> {
   }
 
 
-  // Get movie by title
+   /**
+   * Retrieves a movie by its title.
+   * @param title Title of the movie to retrieve.
+   * @returns Observable with movie details.
+   */
   public getMovieByTitle(title: string): Observable<any> {
     return this.http
       .get(apiUrl + 'movies/' + title, this.getOptions())
       .pipe(catchError(this.handleError));
   }
 
-  // Get director
+  /**
+   * Retrieves director details.
+   * @param directorName Name of the director.
+   * @returns Observable with director details.
+   */
   public getDirector(directorName: string): Observable<any> {
     return this.http
       .get(apiUrl + 'directors/' + directorName, this.getOptions())
       .pipe(catchError(this.handleError));
   }
 
-  // Get genre
+  /**
+   * Retrieves genre details.
+   * @param name Name of the genre.
+   * @returns Observable with genre details.
+   */
   public getGenre(name: string): Observable<any> {
     return this.http
       .get(apiUrl + 'genres/' + name, this.getOptions())
       .pipe(catchError(this.handleError));
   }
 
-  // Get user
+  /**
+   * Retrieves user details.
+   * @param username Username of the user.
+   * @returns Observable with user details.
+   */
   public getUser(username: string): Observable<any> {
     return this.http
       .get(apiUrl + 'users/' + username, this.getOptions())
@@ -109,7 +151,12 @@ public userLogin(userDetails: any): Observable<any> {
 
 
 
-  // Add a movie to favorite Movies
+  /**
+   * Adds a movie to the user's favorite movies.
+   * @param username Username of the user.
+   * @param movieId ID of the movie to add to favorites.
+   * @returns Observable with add favorite movie response.
+   */
   public addFavoriteMovie(username: string, movieId: string): Observable<any> {
     return this.http
       .post(
@@ -120,21 +167,36 @@ public userLogin(userDetails: any): Observable<any> {
       .pipe(catchError(this.handleError));
   }
 
-  // Edit user
+  /**
+   * Edits user details.
+   * @param username Username of the user.
+   * @param userDetails New user details.
+   * @returns Observable with edit user response.
+   */
   public editUser(username: string, userDetails: any): Observable<any> {
     return this.http
       .put(apiUrl + 'users/' + username, userDetails, this.getOptions())
       .pipe(catchError(this.handleError));
   }
 
-  // Delete user
+  /**
+   * Deletes a user account.
+   * @param username Username of the user to delete.
+   * @returns Observable with delete user response.
+   */
   public deleteUser(username: string): Observable<any> {
     return this.http
       .delete(apiUrl + 'users/' + username, this.getOptions())
       .pipe(catchError(this.handleError));
   }
 
-  // Delete a movie from the favorite movies
+  /**
+   * Deletes a movie from the user's favorite movies.
+   * @param username Username of the user.
+   * @param movieId ID of the movie to delete from favorites.
+   * @returns Observable with delete favorite movie response.
+   */
+
   public deleteFavoriteMovie(
     username: string,
     movieId: string
@@ -143,6 +205,12 @@ public userLogin(userDetails: any): Observable<any> {
       .delete(apiUrl + 'users/' + username + '/movies/' + movieId, this.getOptions())
       .pipe(catchError(this.handleError));
   }
+
+    /**
+   * Handles HTTP errors by logging and throwing a custom error message.
+   * @param error HttpErrorResponse object representing the error.
+   * @returns Observable that throws a custom error message.
+   */
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'Something bad happened; please try again later.';
 

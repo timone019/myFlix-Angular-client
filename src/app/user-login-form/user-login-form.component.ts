@@ -1,3 +1,5 @@
+// src/app/user-login-form/user-login-form.component.ts
+
 import { Component, OnInit, Input } from '@angular/core';
 
 // You'll use this import to close the dialog on success
@@ -17,15 +19,20 @@ import { Router } from '@angular/router';
   styleUrls: ['./user-login-form.component.scss'],
 })
 export class UserLoginFormComponent implements OnInit {
+  /**
+   * The default login form data
+   *
+   * @type {{ Username: string; Password: string }}
+   */
   @Input() userData = { Username: '', Password: '' }; // This is the default login form
 
   /**
    * Called when creating an instance of the class
-   * @param fetchApiData
-   * @param dialogRef
-   * @param snackBar
+   * @param {FetchApiDataService} fetchApiData - Service for API calls
+   * @param {MatDialogRef<UserLoginFormComponent>} dialogRef - Reference to the dialog
+   * @param {MatSnackBar} snackBar - Service for snack-bar notifications
+   * @param {Router} router - Router for navigation
    */
-
   constructor(
     public fetchApiData: FetchApiDataService,
     public dialogRef: MatDialogRef<UserLoginFormComponent>,
@@ -33,9 +40,16 @@ export class UserLoginFormComponent implements OnInit {
     private router: Router
   ) {}
 
+  /**
+   * Lifecycle hook that is called after data-bound properties of a directive are initialized.
+   */
   ngOnInit(): void {}
 
-  // This is the function responsible for sending the form inputs to the backend
+  /**
+   * Sends the login form inputs to the backend and handles the response.
+   *
+   * @param {Event} [event] - Optional event parameter to prevent default form submission
+   */
   loginUser(event?: Event): void {
     if (event) {
       event.preventDefault();

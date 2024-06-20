@@ -1,0 +1,11 @@
+{
+  "entryPoints": [
+    "./src/app"
+  ],
+  "out": "./docs",
+  "includes": "./src",
+  "exclude": [
+    "**/*.spec.ts"
+  ],
+  "excludeExternals": true
+}

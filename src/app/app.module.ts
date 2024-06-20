@@ -33,6 +33,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
 
+/**
+ * The routes for the application.
+ */
 const appRoutes: Routes = [
   { path: 'welcome', component: WelcomePageComponent },
   { path: 'movies', component: MovieCardComponent },
@@ -40,6 +43,12 @@ const appRoutes: Routes = [
   { path: '', redirectTo: 'welcome', pathMatch: 'prefix' },
 ];
 
+/**
+ * The main module for the application.
+ *
+ * @export
+ * @class AppModule
+ */
 @NgModule({
   declarations: [
     AppComponent,

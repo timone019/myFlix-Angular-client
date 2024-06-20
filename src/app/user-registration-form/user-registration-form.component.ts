@@ -16,33 +16,38 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   templateUrl: './user-registration-form.component.html',
   styleUrls: ['./user-registration-form.component.scss']
 })
-
 export class UserRegistrationFormComponent implements OnInit {
-
+  /**
+   * The default registration form data
+   *
+   * @type {{ FullName: string; Username: string; Password: string; Email: string; Birthday: string }}
+   */
   @Input() userData = { FullName: '', Username: '', Password: '', Email: '', Birthday: '' };
 
-/**
- * Called when creating an instance of the class
- * @param fetchApiData 
- * @param dialogRef 
- * @param snackBar 
- */
-
+  /**
+   * Called when creating an instance of the class
+   * @param {FetchApiDataService} fetchApiData - Service for API calls
+   * @param {MatDialogRef<UserRegistrationFormComponent>} dialogRef - Reference to the dialog
+   * @param {MatSnackBar} snackBar - Service for snack-bar notifications
+   */
   constructor(
     public fetchApiData: FetchApiDataService,
     public dialogRef: MatDialogRef<UserRegistrationFormComponent>,
     public snackBar: MatSnackBar
-  ) { }
+  ) {}
 
-  ngOnInit(): void {
+  /**
+   * Lifecycle hook that is called after data-bound properties of a directive are initialized.
+   */
+  ngOnInit(): void {}
 
-  }
-
-  // This is the function responsible for sending the form inputs to the backend
+  /**
+   * Sends the registration form inputs to the backend and handles the response.
+   */
   registerUser(): void {
     this.fetchApiData.userRegistration(this.userData).subscribe(
       (response) => {
-        // Logic for a successful user registration goes here! (To be implemented)
+        // Logic for a successful user registration goes here!
         this.dialogRef.close(); // This will close the modal on success!
         console.log(response);
         this.snackBar.open('User registration successful', 'OK', {
