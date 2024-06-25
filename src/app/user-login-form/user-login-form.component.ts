@@ -80,4 +80,16 @@ export class UserLoginFormComponent implements OnInit {
       }
     );
   }
+
+  // Method to programmatically set the credentials
+  setCredentials(username: string, password: string): void {
+    this.userData.Username = username;
+    this.userData.Password = password;
+  }
+
+  // Method to programmatically submit the form
+  submitForm(): void {
+    this.loginUser();
+  }
+
 }

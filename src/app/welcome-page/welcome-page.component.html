@@ -5,15 +5,25 @@
   <mat-card-content>
     <p>Discover and explore your favorite movies with myFlix.</p>
   </mat-card-content>
-  <mat-card-actions align="end">
-    <button mat-raised-button color="primary" (click)="openUserRegistrationDialog()" style="margin-right: 10px;">
+  <mat-card-actions>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openUserRegistrationDialog()"
+      style="margin-right: 10px"
+    >
       Sign Up
     </button>
-    <button mat-raised-button color="primary" (click)="openUserLoginDialog()" style="margin-right: 10px;">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openUserLoginDialog()"
+      style="margin-right: 10px"
+    >
       Login
     </button>
-    <!-- <button mat-raised-button color="primary" (click)="demoLogin()" style="margin-right: 10px;">
+    <button mat-raised-button color="primary" (click)="demoLogin()">
       Demo Login
-    </button> -->
+    </button>
   </mat-card-actions>
 </mat-card>
