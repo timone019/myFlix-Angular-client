@@ -46,11 +46,13 @@ The objective of this project is to build a client-side interface for the myFlix
    cd MyFlixAngularClient
 
 2. **Install dependencies:**
+   ```bash
    npm install
 
 ## Usage
 
 1. **Start the server:**
+   ```bash
    ng serve
 
  
