@@ -8,8 +8,10 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 
+import { environment } from '../environments/environment';
+
 /** Declaring the api url that will provide data for the client app */
-const apiUrl = 'https://move-api-kw8t.onrender.com/';
+const apiUrl = environment.apiBaseUrl;
 
 /**
  * Service to fetch data from the movie API.
