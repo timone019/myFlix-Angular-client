@@ -35,7 +35,7 @@ The objective of this project is to build a client-side interface for the myFlix
 - **User Management:** Registration and login forms
 - **Design Framework:** Angular Material
 - **Documentation:** Typedoc for code comments, JSDoc for technical documentation
-- **Hosting:** GitHub Pages
+- **Hosting:** GitHub Pages (Render hosts the API)
 
 ## Installation
 
@@ -49,10 +49,22 @@ The objective of this project is to build a client-side interface for the myFlix
    ```bash
    npm install
 
+## Environment Setup
+
+The Angular client reads the backend base URL from `environment.ts` / `environment.prod.ts` (`apiBaseUrl`).
+
+1. Local dev already targets `https://move-api-kw8t.onrender.com/`. To point elsewhere, edit `src/environments/environment.ts` (and `environment.prod.ts` for builds).
+2. Keep `apiBaseUrl` trailing slash so existing service calls (which append endpoints) continue to work.
+
 ## Usage
 
-1. **Start the server:**
+1. **Start the dev server:**
    ```bash
    ng serve
+   ```
 
- 
+2. **Build & deploy to GitHub Pages (gh-pages branch):**
+   ```bash
+   npx ng deploy --base-href=/myFlix-Angular-client/
+   ```
+   This compiles with the production environment (Render URL) and publishes to GitHub Pages via `angular-cli-ghpages`.
