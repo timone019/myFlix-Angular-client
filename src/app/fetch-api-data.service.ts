@@ -9,7 +9,7 @@ import { catchError, map } from 'rxjs/operators';
 
 
 /** Declaring the api url that will provide data for the client app */
-const apiUrl = 'https://mymovies-8b73c95d0ae4.herokuapp.com/';
+const apiUrl = 'https://move-api-kw8t.onrender.com/';
 
 /**
  * Service to fetch data from the movie API.
